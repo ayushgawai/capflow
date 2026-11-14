@@ -1,7 +1,7 @@
 # capflow
 
 A change-data-capture (CDC) replication pipeline in Python, modeled on
-SQL Server CDC / Qlik Replicate style log-based replication: read the change
+SQL Server CDC style log-based replication: read the change
 log (inserts, updates, deletes), poll with a commit-LSN cursor, land changes
 in a warehouse table, reconcile row-by-row against the source of record, and
 monitor lag — with backfill/replay from a saved LSN when something breaks.
@@ -155,15 +155,15 @@ stats = backfill(capture, warehouse, from_lsn=saved)
 ## Limitations (honest)
 
 - **Stand-ins, not real systems.** No live SQL Server connection, no
-  `cdc.fn_cdc_get_all_changes_*` queries, no real cloud warehouse
-  (BigQuery/Snowflake/etc.). SQLite and the in-memory log model the
+  `cdc.fn_cdc_get_all_changes_*` queries, and no real cloud warehouse.
+  SQLite and the in-memory log model the
   semantics — LSN ordering, before/after images, commit cursor — not wire
   protocols, permissions, or SQL Server CDC retention/cleanup jobs.
 - **Single table, string primary keys, whole-row payloads.** No schema
   evolution / DDL capture, no multi-table transactions, no column-level
   filtering or masking, no composite keys beyond string coercion.
 - **Polling, not streaming.** Lag is batch-shaped; there is no log tailing,
-  no Debezium/Kafka-style streaming, and no parallel apply (single-threaded,
+  no streaming transport, and no parallel apply (single-threaded,
   one SQLite connection).
 - **Exactly-once is scoped to this process's ledger.** The `applied_lsn`
   ledger gives idempotent replay against the same warehouse database; it is
