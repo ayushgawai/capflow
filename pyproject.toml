@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "capflow"
+version = "0.1.0"
+description = "CDC replication pipeline from SQL Server style change logs into a cloud warehouse with reconciliation and backfill"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+
+[project.scripts]
+capflow-bench = "capflow.bench:main"
+
+[tool.setuptools.packages.find]
+include = ["capflow*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
